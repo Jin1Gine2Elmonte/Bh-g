@@ -1,0 +1,5 @@
+{
+  "name": "AI Image Generator & Editor",
+  "description": "A web application that uses AI to generate new images from text prompts and edit existing images based on user instructions. The interface is in Arabic.",
+  "requestFramePermissions": []
+}
