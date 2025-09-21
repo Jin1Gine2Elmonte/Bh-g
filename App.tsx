@@ -1,9 +1,9 @@
-
 import React, { useState, useCallback } from 'react';
 import Header from './components/Header';
 import Tabs from './components/Tabs';
 import ImageGenerator from './components/ImageGenerator';
 import ImageEditor from './components/ImageEditor';
+import VideoGenerator from './components/VideoGenerator';
 import { Mode } from './types';
 
 const App: React.FC = () => {
@@ -13,6 +13,19 @@ const App: React.FC = () => {
     setMode(newMode);
   }, []);
 
+  const renderActiveComponent = () => {
+    switch (mode) {
+      case Mode.GENERATE:
+        return <ImageGenerator />;
+      case Mode.EDIT:
+        return <ImageEditor />;
+      case Mode.VIDEO:
+        return <VideoGenerator />;
+      default:
+        return <ImageGenerator />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white font-sans">
       <Header />
@@ -20,7 +33,7 @@ const App: React.FC = () => {
         <div className="max-w-3xl mx-auto">
           <Tabs activeMode={mode} onModeChange={handleModeChange} />
           <div className="mt-8 bg-gray-800 rounded-xl shadow-2xl p-6 sm:p-8">
-            {mode === Mode.GENERATE ? <ImageGenerator /> : <ImageEditor />}
+            {renderActiveComponent()}
           </div>
         </div>
         <footer className="text-center text-gray-500 mt-12 pb-6">

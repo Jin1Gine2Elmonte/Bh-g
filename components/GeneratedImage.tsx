@@ -18,7 +18,7 @@ const GeneratedImage: React.FC<GeneratedImageProps> = ({ src, alt }) => {
         />
         <a
           href={src}
-          download="generated-image.png"
+          download="generated-image.jpg"
           className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         >
           <span className="text-white text-xl font-bold bg-indigo-600 px-6 py-3 rounded-full">

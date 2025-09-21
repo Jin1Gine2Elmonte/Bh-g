@@ -1,6 +1,6 @@
-
 import { GoogleGenAI, Modality, GenerateContentResponse } from "@google/genai";
 import { AspectRatio } from '../types';
+import { sleep } from "../utils";
 
 if (!process.env.API_KEY) {
   throw new Error("API_KEY environment variable not set");
@@ -15,14 +15,14 @@ export const generateImage = async (prompt: string, aspectRatio: AspectRatio): P
       prompt: prompt,
       config: {
         numberOfImages: 1,
-        outputMimeType: 'image/png',
+        outputMimeType: 'image/jpeg',
         aspectRatio: aspectRatio,
       },
     });
 
     if (response.generatedImages && response.generatedImages.length > 0) {
       const base64ImageBytes: string = response.generatedImages[0].image.imageBytes;
-      return `data:image/png;base64,${base64ImageBytes}`;
+      return `data:image/jpeg;base64,${base64ImageBytes}`;
     } else {
       throw new Error("لم يتم إنشاء أي صورة. يرجى المحاولة مرة أخرى.");
     }
@@ -68,5 +68,56 @@ export const editImage = async (base64Data: string, mimeType: string, prompt: st
   } catch (error) {
     console.error("Error editing image:", error);
     throw new Error("حدث خطأ أثناء تعديل الصورة.");
+  }
+};
+
+export const generateVideo = async (prompt: string, onProgress: (message: string) => void): Promise<string> => {
+  try {
+    onProgress("بدء عملية إنشاء الفيديو...");
+    let operation = await ai.models.generateVideos({
+      model: 'veo-2.0-generate-001',
+      prompt: prompt,
+      config: {
+        numberOfVideos: 1
+      }
+    });
+
+    onProgress("تم إرسال الطلب. تتم معالجة الفيديو الآن...");
+    
+    const pollInterval = 10000; // 10 seconds
+    let attempts = 0;
+    const maxAttempts = 30; // 5 minutes timeout
+
+    while (!operation.done && attempts < maxAttempts) {
+      await sleep(pollInterval);
+      onProgress(`جاري التحقق من حالة الفيديو... (محاولة ${attempts + 1})`);
+      operation = await ai.operations.getVideosOperation({ operation: operation });
+      attempts++;
+    }
+
+    if (!operation.done) {
+        throw new Error("انتهت مهلة إنشاء الفيديو. يرجى المحاولة مرة أخرى.");
+    }
+    
+    if (operation.error) {
+        throw new Error(`حدث خطأ أثناء إنشاء الفيديو: ${operation.error.message}`);
+    }
+
+    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+
+    if (downloadLink) {
+        onProgress("اكتمل إنشاء الفيديو!");
+        // The API key is required to access the download link
+        return `${downloadLink}&key=${process.env.API_KEY}`;
+    } else {
+        throw new Error("فشل استرداد رابط تنزيل الفيديو.");
+    }
+
+  } catch (error) {
+    console.error("Error generating video:", error);
+    if (error instanceof Error) {
+        throw new Error(`فشل إنشاء الفيديو: ${error.message}`);
+    }
+    throw new Error("حدث خطأ غير متوقع أثناء إنشاء الفيديو.");
   }
 };

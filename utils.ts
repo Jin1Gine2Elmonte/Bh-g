@@ -1,4 +1,3 @@
-
 /**
  * Converts a File object to a base64 encoded string, stripping the data URL prefix.
  * @param file The file to convert.
@@ -17,3 +16,12 @@ export const fileToBase64 = (file: File): Promise<string> => {
     reader.onerror = (error) => reject(error);
   });
 };
+
+/**
+ * Pauses execution for a specified number of milliseconds.
+ * @param ms The number of milliseconds to wait.
+ * @returns A promise that resolves after the specified delay.
+ */
+export const sleep = (ms: number): Promise<void> => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

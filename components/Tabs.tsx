@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Mode } from '../types';
 
@@ -13,18 +12,27 @@ const Tabs: React.FC<TabsProps> = ({ activeMode, onModeChange }) => {
   const inactiveButtonClasses = "bg-gray-700 text-gray-300 hover:bg-gray-600";
 
   return (
-    <div className="grid grid-cols-2 gap-4 bg-gray-900 p-2 rounded-xl">
+    <div className="grid grid-cols-3 gap-4 bg-gray-900 p-2 rounded-xl">
       <button
         onClick={() => onModeChange(Mode.GENERATE)}
         className={`${commonButtonClasses} ${activeMode === Mode.GENERATE ? activeButtonClasses : inactiveButtonClasses}`}
+        aria-pressed={activeMode === Mode.GENERATE}
       >
         إنشاء صورة
       </button>
       <button
         onClick={() => onModeChange(Mode.EDIT)}
         className={`${commonButtonClasses} ${activeMode === Mode.EDIT ? activeButtonClasses : inactiveButtonClasses}`}
+        aria-pressed={activeMode === Mode.EDIT}
       >
         تعديل صورة
+      </button>
+      <button
+        onClick={() => onModeChange(Mode.VIDEO)}
+        className={`${commonButtonClasses} ${activeMode === Mode.VIDEO ? activeButtonClasses : inactiveButtonClasses}`}
+        aria-pressed={activeMode === Mode.VIDEO}
+      >
+        إنشاء فيديو
       </button>
     </div>
   );
